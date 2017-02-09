@@ -52,6 +52,7 @@ enum Error {
 	UnsupportedCid,
 	BlockNotFound,
 	TransactionNotFound,
+	StateRootNotFound,
 }
 
 impl From<Error> for Out {
@@ -64,6 +65,7 @@ impl From<Error> for Out {
 			CidParsingFailed => Out::Bad("CID parsing failed"),
 			BlockNotFound => Out::NotFound("Block not found"),
 			TransactionNotFound => Out::NotFound("Transaction not found"),
+			StateRootNotFound => Out::NotFound("State root not found"),
 		}
 	}
 }
@@ -112,6 +114,7 @@ impl IpfsHandler {
 			Codec::EthereumBlock => self.get_block(hash),
 			Codec::EthereumBlockList => self.get_block_list(hash),
 			Codec::EthereumTx => self.get_transaction(hash),
+			Codec::EthereumStateTrie => self.get_state_trie(hash),
 			_ => return Err(Error::UnsupportedCid),
 		}
 	}
@@ -138,6 +141,14 @@ impl IpfsHandler {
 		let tx = self.client.transaction(tx_id).ok_or(Error::TransactionNotFound)?;
 
 		self.out = Out::OctetStream(rlp::encode(tx.deref()).to_vec());
+
+		Ok(())
+	}
+
+	fn get_state_trie(&mut self, hash: H256) -> Result<(), Error> {
+		let data = self.client.state_data(&hash).ok_or(Error::StateRootNotFound)?;
+
+		self.out = Out::OctetStream(data);
 
 		Ok(())
 	}
