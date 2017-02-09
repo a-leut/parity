@@ -110,6 +110,7 @@ impl IpfsHandler {
 
 		match cid.codec {
 			Codec::EthereumBlock => self.get_block(hash),
+			Codec::EthereumBlockList => self.get_block_list(hash),
 			Codec::EthereumTx => self.get_transaction(hash),
 			_ => return Err(Error::UnsupportedCid),
 		}
@@ -120,6 +121,14 @@ impl IpfsHandler {
 		let block = self.client.block(block_id).ok_or(Error::BlockNotFound)?;
 
 		self.out = Out::OctetStream(block.into_inner());
+
+		Ok(())
+	}
+
+	fn get_block_list(&mut self, hash: H256) -> Result<(), Error> {
+		let ommers = self.client.find_uncles(&hash).ok_or(Error::BlockNotFound)?;
+
+		self.out = Out::OctetStream(rlp::encode(&ommers).to_vec());
 
 		Ok(())
 	}
@@ -235,5 +244,7 @@ mod tests {
 		assert_eq!(get_param(query, "foo"), Some("100"));
 		assert_eq!(get_param(query, "bar"), Some("200"));
 		assert_eq!(get_param(query, "qux"), Some("300"));
+		assert_eq!(get_param(query, "bar="), None);
+		assert_eq!(get_param(query, "200"), None);
 	}
 }
