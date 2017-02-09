@@ -71,18 +71,6 @@ impl Url {
 		}
 	}
 
-	/// Get a query parameter's value by name.
-	pub fn get_param(&self, name: &str) -> Option<&str> {
-		let query = match self.query {
-			Some(ref query) => query,
-			None => return None
-		};
-
-		query.split('&')
-			.find(|part| part.starts_with(name) && part[name.len()..].starts_with("="))
-			.map(|part| &part[name.len() + 1..])
-	}
-
 	/// Create a `Url` from a `rust-url` `Url`.
 	pub fn from_generic_url(raw_url: url_lib::Url) -> Result<Url, String> {
 		// Map empty usernames to None.
@@ -128,15 +116,6 @@ mod test {
 	#[test]
 	fn test_explicit_port() {
 		assert_eq!(Url::parse("http://localhost:3097").unwrap().port, 3097u16);
-	}
-
-	#[test]
-	fn test_get_param() {
-		let url = Url::parse("http://example.com/wow?foo=100&bar=200&qux=300").unwrap();
-
-		assert_eq!(url.get_param("foo"), Some("100"));
-		assert_eq!(url.get_param("bar"), Some("200"));
-		assert_eq!(url.get_param("qux"), Some("300"));
 	}
 
 	#[test]

@@ -22,7 +22,6 @@ use hyper::method::Method;
 use hyper::header::AccessControlAllowOrigin;
 
 use url::Url;
-// use api::ipfs;
 use api::types::{App, ApiError};
 use api::response;
 use apps::fetcher::Fetcher;
@@ -148,7 +147,6 @@ impl server::Handler<net::HttpStream> for RestApiRouter {
 		let endpoint = url.path.get(1);
 
 		let handler = endpoint.and_then(|v| match v.as_str() {
-			// "v0" => ipfs::resolve(&url),
 			"apps" => Some(response::as_json(&self.api.list_apps())),
 			"ping" => Some(response::ping()),
 			"content" => self.resolve_content(&url),

@@ -26,8 +26,6 @@ extern crate url as url_lib;
 extern crate unicase;
 extern crate serde;
 extern crate serde_json;
-extern crate try_from;
-extern crate cid;
 extern crate zip;
 extern crate rand;
 extern crate jsonrpc_core;

@@ -27,8 +27,6 @@ base32 = "0.3"
 mime = "0.2"
 mime_guess = "1.6.1"
 time = "0.1.35"
-try_from = "~0.2.1"
-cid = "~0.1.2"
 serde_macros = { version = "0.8", optional = true }
 zip = { version = "0.1", default-features = false }
 ethcore = { path = "../ethcore" }
