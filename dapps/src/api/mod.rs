@@ -22,8 +22,6 @@
 mod api;
 mod response;
 mod types;
-// mod ipfs;
 
-// pub use self::ipfs::IpfsApi;
 pub use self::api::RestApi;
 pub use self::types::App;

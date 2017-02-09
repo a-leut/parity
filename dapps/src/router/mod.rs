@@ -39,7 +39,6 @@ pub enum SpecialEndpoint {
 	Rpc,
 	Api,
 	Utils,
-	// Ipfs,
 	None,
 }
 
