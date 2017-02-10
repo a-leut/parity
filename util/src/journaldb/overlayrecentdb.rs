@@ -216,19 +216,24 @@ impl JournalDB for OverlayRecentDB {
 	}
 
 	fn mem_used(&self) -> usize {
-		let mut mem = self.transaction_overlay.mem_used();
+		let transaction_size = self.transaction_overlay.mem_used();
+
 		let overlay = self.journal_overlay.read();
+		let backing_size = overlay.backing_overlay.mem_used();
+		let pending_size = overlay.pending_overlay.heap_size_of_children();
+		let journal_size = overlay.journal.heap_size_of_children();
 
-		mem += overlay.backing_overlay.mem_used();
-		mem += overlay.pending_overlay.heap_size_of_children();
-		mem += overlay.journal.heap_size_of_children();
+		let mem_used = transaction_size + backing_size + pending_size + journal_size;
+		let fast_journal_size = self.journal_size();
 
-		mem
+		trace!(target: "memory", "{} vs {}: {} TX, {} backing, {} pending, {} journal",
+			fast_journal_size, mem_used, transaction_size, backing_size, pending_size, journal_size);
+
+		mem_used
 	}
 
 	fn journal_size(&self) -> usize {
 		self.journal_overlay.read().cumulative_size
-
 	}
 
 	fn is_empty(&self) -> bool {
