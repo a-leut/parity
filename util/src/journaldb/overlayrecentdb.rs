@@ -224,7 +224,7 @@ impl JournalDB for OverlayRecentDB {
 		let journal_size = overlay.journal.heap_size_of_children();
 
 		let mem_used = transaction_size + backing_size + pending_size + journal_size;
-		let fast_journal_size = self.journal_size();
+		let fast_journal_size = overlay.cumulative_size;
 
 		trace!(target: "memory", "{} vs {}: {} TX, {} backing, {} pending, {} journal",
 			fast_journal_size, mem_used, transaction_size, backing_size, pending_size, journal_size);
